@@ -32,6 +32,17 @@ else()
     endif()
 endif()
 
+option(BUILD_RAPIDJSON "Build supplied RapidJSON instead of finding the installed lib" OFF)
+if (NOT BUILD_RAPIDJSON)
+    find_package(RapidJSON)
+    if (NOT RapidJSON_FOUND)
+        message(FATAL_ERROR "RapidJSON was not found. Set BUILD_RapidJSON to build it \
+            with the supplied submodule")
+    endif()
+else()
+    message(FATAL_ERROR "PIPS")
+endif()
+
 if(NOT CMAKE_VERSION VERSION_LESS 3.0)
     add_library(cereal INTERFACE)
     target_include_directories(cereal INTERFACE
