@@ -42,11 +42,13 @@ foreach(TEST_SOURCE ${TESTS})
 
     add_executable(${TEST_TARGET} ${TEST_SOURCE})
     target_link_libraries(${TEST_TARGET} ${CEREAL_THREAD_LIBS})
+    target_link_libraries(${TEST_TARGET} RapidJSON::RapidJSON)
     add_test("${TEST_TARGET}" "${TEST_TARGET}")
 
     # If we are on a 64-bit machine, create an extra 32-bit version of the test if portability testing is enabled
     if((NOT MSVC) AND (${CMAKE_SIZEOF_VOID_P} EQUAL 8) AND (NOT SKIP_PORTABILITY_TEST))
       add_executable(${TEST_TARGET}_32 ${TEST_SOURCE})
+      target_link_libraries(${TEST_TARGET}_32 RapidJSON::RapidJSON)
       set_target_properties(${TEST_TARGET}_32 PROPERTIES
         COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
       add_test("${TEST_TARGET}_32" "${TEST_TARGET}_32")

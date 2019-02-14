@@ -3,7 +3,7 @@ project (cereal)
 
 option(SKIP_PORTABILITY_TEST "Skip portability (32 bit) tests" OFF)
 if(NOT CMAKE_VERSION VERSION_LESS 3.0) # installing cereal requires INTERFACE lib
-    option(JUST_INSTALL_CEREAL "Don't do anything besides installing the library" OFF)
+    option(JUST_INSTALL_CEREAL "Don't do anything besides installing the library" ON)
 endif()
 
 option(THREAD_SAFE "Use mutexes to ensure thread safety" OFF)
@@ -18,7 +18,7 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /W3 /WX")
 else()
     set(CMAKE_CXX_FLAGS "-Wall -g -Wextra -Wshadow -pedantic -Wold-style-cast ${CMAKE_CXX_FLAGS}")
-    option(WITH_WERROR "Compile with '-Werror' C++ compiler flag" ON)
+    option(WITH_WERROR "Compile with '-Werror' C++ compiler flag" OFF)
     if(WITH_WERROR)
         set(CMAKE_CXX_FLAGS "-Werror ${CMAKE_CXX_FLAGS}")
     endif(WITH_WERROR)
@@ -32,15 +32,18 @@ else()
     endif()
 endif()
 
-option(BUILD_RAPIDJSON "Build supplied RapidJSON instead of finding the installed lib" OFF)
-if (NOT BUILD_RAPIDJSON)
+# include own modules
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake/Modules)
+option(USE_SUPPLIED_RAPIDJSON "use supplied RapidJSON" OFF)
+if (NOT USE_SUPPLIED_RAPIDJSON)
     find_package(RapidJSON)
     if (NOT RapidJSON_FOUND)
-        message(FATAL_ERROR "RapidJSON was not found. Set BUILD_RapidJSON to build it \
-            with the supplied submodule")
+        message(FATAL_ERROR "RapidJSON was not found. Set USE_SUPPLIED_RAPIDJSON use \
+            the supplied submodule")
     endif()
 else()
-    message(FATAL_ERROR "PIPS")
+    set(RapidJSON_HINT ${CMAKE_CURRENT_SOURCE_DIR}/rapidjson/include/rapidjson)
+    find_package(RapidJSON REQUIRED)
 endif()
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.0)
@@ -49,6 +52,7 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.0)
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
     )
+    target_link_libraries(cereal INTERFACE RapidJSON::RapidJSON)
     install(TARGETS cereal EXPORT cereal
         DESTINATION lib) # ignored
     install(EXPORT cereal FILE cereal-config.cmake

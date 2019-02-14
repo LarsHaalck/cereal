@@ -2,9 +2,11 @@ add_subdirectory(sandbox_shared_lib)
 
 add_executable(sandbox sandbox.cpp)
 add_executable(sandbox_json sandbox_json.cpp)
+target_link_libraries(sandbox_json RapidJSON::RapidJSON)
 add_executable(sandbox_rtti sandbox_rtti.cpp)
 
 add_executable(sandbox_vs sandbox_vs.cpp)
+target_link_libraries(sandbox_vs RapidJSON::RapidJSON)
 target_link_libraries(sandbox_vs sandbox_vs_dll)
 include_directories(sandbox_shared_lib)
 
