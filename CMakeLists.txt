@@ -32,27 +32,12 @@ else()
     endif()
 endif()
 
-# include own modules
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake/Modules)
-option(USE_SUPPLIED_RAPIDJSON "use supplied RapidJSON" OFF)
-if (NOT USE_SUPPLIED_RAPIDJSON)
-    find_package(RapidJSON)
-    if (NOT RapidJSON_FOUND)
-        message(FATAL_ERROR "RapidJSON was not found. Set USE_SUPPLIED_RAPIDJSON use \
-            the supplied submodule")
-    endif()
-else()
-    set(RapidJSON_HINT ${CMAKE_CURRENT_SOURCE_DIR}/rapidjson/include/rapidjson)
-    find_package(RapidJSON REQUIRED)
-endif()
-
 if(NOT CMAKE_VERSION VERSION_LESS 3.0)
     add_library(cereal INTERFACE)
     target_include_directories(cereal INTERFACE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
     )
-    target_link_libraries(cereal INTERFACE RapidJSON::RapidJSON)
     install(TARGETS cereal EXPORT cereal
         DESTINATION lib) # ignored
     install(EXPORT cereal FILE cereal-config.cmake NAMESPACE cereal::
