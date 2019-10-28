@@ -55,7 +55,7 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.0)
     target_link_libraries(cereal INTERFACE RapidJSON::RapidJSON)
     install(TARGETS cereal EXPORT cereal
         DESTINATION lib) # ignored
-    install(EXPORT cereal FILE cereal-config.cmake
+    install(EXPORT cereal FILE cereal-config.cmake NAMESPACE cereal::
         DESTINATION share/cmake/cereal)
     install(DIRECTORY include/cereal DESTINATION include)
 endif()
